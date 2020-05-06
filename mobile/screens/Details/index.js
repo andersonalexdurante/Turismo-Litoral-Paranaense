@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { View, Text, ImageBackground, TouchableOpacity, ScrollView, FlatList, Image } from 'react-native'
 import { useRoute } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
+import LottieView from 'lottie-react-native'
 
+import Heart from '../../assets/heart.json'
 import api from '../../services/api'
 
 export default function Details ({navigation}) {
-
+    const [visivel, setVisivel] = useState(false)
+    const [favorito, setFavorito] = useState(false)
     const [sugestoes, setSugestoes] = useState([])
 
     const route = useRoute()
@@ -23,10 +26,15 @@ export default function Details ({navigation}) {
         
     }
 
+   useEffect(() => {
+        setTimeout(function() {
+            setFavorito(!favorito)
+        },1000)
+   }, [favorito])
+
     useEffect(() => {
         loadLocals()
     }, [])
-
 
     return (
         <View style={{flex: 1}}> 
@@ -39,8 +47,8 @@ export default function Details ({navigation}) {
                     <TouchableOpacity onPress={goToHome} style={{backgroundColor: '#27c227', borderRadius: 50, marginLeft: 16, marginTop: 16}}>
                         <MaterialIcons name="keyboard-backspace" size={30}  color='#fff'/>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{borderRadius: 50, marginRight: 16, marginTop: 16}}>
-                        <MaterialIcons name="favorite-border" size={30}  color='#fff'/>
+                    <TouchableOpacity onPress={() => {favorito ? setFavorito(false) : setFavorito(true)}} style={{borderRadius: 50, marginRight: 16, marginTop: 16}}>
+                        <MaterialIcons name="favorite" size={30}  color={favorito ? 'red' : '#fff'}/>
                     </TouchableOpacity>
                 </View>
                 <View style={{marginTop: 200, position: 'absolute'}}>
@@ -52,6 +60,15 @@ export default function Details ({navigation}) {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
+            {favorito ? <View style={{flex: 1, height: 300, width: 300, position:"absolute", top: 200, left: 30}}>
+                <LottieView
+                source={require('../../assets/heart.json')}    
+                autoPlay 
+                resizeMode="cover"
+                loop
+                speed={0.5}
+                />
+            </View> : null }
 
             <ScrollView>
                 <View style={{padding: 16}}>
