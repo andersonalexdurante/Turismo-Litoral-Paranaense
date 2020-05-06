@@ -24,7 +24,7 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         textShadowColor: '#000',
         textShadowOffset:{width: 3, height: 3},
-        textShadowRadius:10,
+        textShadowRadius:1,
     },
 
     searchDescription: {
@@ -33,7 +33,7 @@ export default StyleSheet.create({
         color: '#fff',
         textShadowColor: '#000',
         textShadowOffset:{width: 1, height: 1},
-        textShadowRadius:10,
+        textShadowRadius:1,
     },
 
     searchBox: {

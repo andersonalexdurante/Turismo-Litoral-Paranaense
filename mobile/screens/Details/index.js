@@ -1,45 +1,37 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, ImageBackground, TouchableOpacity, ScrollView, FlatList, Image } from 'react-native'
-
+import { useRoute } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
 
-import styles from './styles'
+import api from '../../services/api'
 
 export default function Details ({navigation}) {
 
-    const [image, setImage] = useState('https://brazilianexperience.com/wp-content/uploads/2014/01/ilha-do-mel-3.jpg')
+    const [sugestoes, setSugestoes] = useState([])
 
-    const [gallery, setgallery] = useState([
-        { 
-            image: 'https://104maisfm.com.br/wp-content/uploads/2020/01/ilha-do-mel.jpg',
-            title: 'Ilha do Mel',  
-            key: '1' 
-        },
-        { 
-            image: 'https://marsemfim.com.br/wp-content/uploads/2014/05/salto-mil-.jpg',
-            title: 'Salto Morato', 
-            key: '2' 
-        },
-        { 
-            image: 'https://www.ilhabela.com.br/wp-content/uploads/2013/02/praia-mansa-ilhabela-ilhabelacombr-2.jpg',
-            title: 'Praia Mança',  
-            key: '3' 
-        },
-        { 
-            image: 'https://media-cdn.tripadvisor.com/media/photo-s/0b/9f/cf/e7/passarela-ilha-dos-valadares.jpg',
-            title: 'Centro Histórico',
-            key: '4' 
-        },
-    ]);
+    const route = useRoute()
+    const local = route.params.item
 
     function goToHome() {
         navigation.navigate('Home')
     }
 
+    async function loadLocals() {
+        const res = await api.get('/locais')
+
+        setSugestoes(res.data)
+        
+    }
+
+    useEffect(() => {
+        loadLocals()
+    }, [])
+
+
     return (
         <View style={{flex: 1}}> 
             <ImageBackground
-            source={{uri: image}}
+            source={{uri: local.imagemDetail}}
             style={{height: 380}}
             imageStyle={{borderBottomLeftRadius: 40, borderBottomRightRadius: 40}}
             >
@@ -51,11 +43,11 @@ export default function Details ({navigation}) {
                         <MaterialIcons name="favorite-border" size={30}  color='#fff'/>
                     </TouchableOpacity>
                 </View>
-                <View style={{marginTop: 200}}>
-                    <Text style={{color: '#fff', fontSize: 16, paddingHorizontal: 14, marginBottom: 20}}>Descubra Ilha do Mel</Text>
-                    <Text style={{color: '#fff', fontSize: 24, fontWeight: 'bold', paddingHorizontal: 14}}>Explore a beleza incrível de Ilha do Mel</Text>
+                <View style={{marginTop: 200, position: 'absolute'}}>
+                    <Text style={{color: '#fff', fontSize: 16, paddingHorizontal: 14, marginBottom: 20,textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}}>Descubra {local.nome}</Text>
+                    <Text style={{color: '#fff', fontSize: 24, fontWeight: 'bold', paddingHorizontal: 14,textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}}>Explore a beleza incrível de {local.nome}</Text>
                     <TouchableOpacity style={{backgroundColor: '#27c227', position: 'absolute', borderRadius: 30, top: 110, left: 210, flexDirection: 'row', padding: 10}}>
-                        <MaterialIcons name="location-on" size={20} color='#fff' />
+                        <MaterialIcons name="location-on" size={20} color='#eb673b' />
                         <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 16}}>Localização</Text>
                     </TouchableOpacity>
                 </View>
@@ -64,28 +56,30 @@ export default function Details ({navigation}) {
             <ScrollView>
                 <View style={{padding: 16}}>
                     <Text style={{fontSize: 20, fontWeight: 'bold'}}>Sobre o lugar</Text>
-                    <Text style={{opacity: 0.8, textAlign: 'justify', marginTop: 10}}>A ilha do Mel é um ponto turístico de muita importância no estado do Paraná. Muitas pessoas consideram que a ilha tem as melhores praias do estado. A ilha, fazendo parte do município de Paranaguá, é administrada pelo Instituto Ambiental do Paraná (IAP) e possui um restrito programa de manejo. Não é permitida a tração animal ou a motor na ilha. Existem muitas áreas onde não é permitida a presença de visitantes. A ilha possui quatro pontos turísticos de destaque: Ao norte a Fortaleza, no centro Nova Brasília e o Farol das Conchas e ao Sul Encantadas.</Text>
+                    <Text style={{opacity: 0.8, textAlign: 'justify', marginTop: 10, lineHeight: 20}}>{local.descricao}</Text>
                 </View>
 
                 <View style={{paddingHorizontal: 16}}>
                     <Text style={{fontSize: 20, fontWeight: 'bold'}}>Sugestões</Text>
                     <FlatList 
-                    data={gallery}
+                    data={sugestoes}
                     horizontal={true}
-                    renderItem={ ({ item } ) => {
+                    keyExtractor={(item) => String(item.id) }
+                    showsHorizontalScrollIndicator={false}
+                    renderItem={( { item } ) => {
                         return (
-                            <View style={{marginTop: 16}}>
-                                <TouchableOpacity>
-                                    <Image source={{uri: item.image}} style={{height: 250, width: 150, marginRight: 8, borderRadius: 10}}/>
+                            <View style={{paddingTop: 16}}>
+                                <TouchableOpacity onPress={() => goToDetail(item)}>
+                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 8, borderRadius: 10}}/>
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
                                     <MaterialIcons name="location-on" size={20} color='#fff'/>
-                                    <Text style={{color: '#fff'}}>{item.title}</Text>
+                                    <Text style={{color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
                                 </View>
                             </View>
-                        )}
-                    }
-                    />                    
+                        )
+                    }}
+                />  
                 </View>
 
             </ScrollView>
