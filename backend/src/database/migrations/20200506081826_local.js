@@ -9,6 +9,8 @@ exports.up = function(knex) {
         table.decimal('latitude').notNullable()
         table.decimal('longitude').notNullable()
         table.boolean('destaque').notNullable()
+        table.boolean('emAlta').notNullable()
+        table.integer('favorito').notNullable()
     })
 };
     

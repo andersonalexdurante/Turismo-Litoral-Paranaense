@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react'
-import { View, Text, ImageBackground, TouchableOpacity, ScrollView, FlatList, Image } from 'react-native'
+import { View, Text, ImageBackground, TouchableOpacity, ScrollView, FlatList, Image, Animated } from 'react-native'
 import { useRoute } from '@react-navigation/native'
 import { MaterialIcons } from '@expo/vector-icons'
 import LottieView from 'lottie-react-native'
 
-import Heart from '../../assets/heart.json'
 import api from '../../services/api'
 
 export default function Details ({navigation}) {
-    const [visivel, setVisivel] = useState(false)
-    const [favorito, setFavorito] = useState(false)
-    const [sugestoes, setSugestoes] = useState([])
-
+    
     const route = useRoute()
     const local = route.params.item
 
+    const [favorito, setFavorito] = useState(local.favorito)
+    const [sugestoes, setSugestoes] = useState([])
+    const [progresso, setProgresso] = useState(new Animated.Value(0))
+    const [animacao, setAnimacao] = useState(false)
+
     function goToHome() {
         navigation.navigate('Home')
+    }
+
+    function goToDetail(item) {
+        navigation.navigate('Details', { item })
     }
 
     async function loadLocals() {
@@ -26,15 +31,36 @@ export default function Details ({navigation}) {
         
     }
 
-   useEffect(() => {
-        setTimeout(function() {
-            setFavorito(!favorito)
-        },1000)
-   }, [favorito])
+    async function changeFavorite() {
+        try {
+            await api.put(`favoritos/${local.id}`, {
+                local_id: local.id
+            }
+            ).then(res => {
+                setFavorito(res.data)
+                if(favorito === 0) {
+                    setAnimacao(true)
+                    heart()
+                }
+            })
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    function heart() {
+        Animated.timing(progresso, {
+            toValue: 1,
+            delay:1000,
+        }).start(() => setAnimacao(false))
+        
+    }
 
     useEffect(() => {
         loadLocals()
     }, [])
+
+    const interpolation = progresso.interpolate({ inputRange: [0, 1], outputRange: [0, 0] });
 
     return (
         <View style={{flex: 1}}> 
@@ -47,8 +73,8 @@ export default function Details ({navigation}) {
                     <TouchableOpacity onPress={goToHome} style={{backgroundColor: '#27c227', borderRadius: 50, marginLeft: 16, marginTop: 16}}>
                         <MaterialIcons name="keyboard-backspace" size={30}  color='#fff'/>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {favorito ? setFavorito(false) : setFavorito(true)}} style={{borderRadius: 50, marginRight: 16, marginTop: 16}}>
-                        <MaterialIcons name="favorite" size={30}  color={favorito ? 'red' : '#fff'}/>
+                    <TouchableOpacity onPress={changeFavorite} style={{borderRadius: 50, marginRight: 16, marginTop: 16}}>
+                        <MaterialIcons name="favorite" size={30}  color={favorito == 1 ? 'red' : '#fff'}/>
                     </TouchableOpacity>
                 </View>
                 <View style={{marginTop: 200, position: 'absolute'}}>
@@ -60,15 +86,22 @@ export default function Details ({navigation}) {
                     </TouchableOpacity>
                 </View>
             </ImageBackground>
-            {favorito ? <View style={{flex: 1, height: 300, width: 300, position:"absolute", top: 200, left: 30}}>
-                <LottieView
-                source={require('../../assets/heart.json')}    
-                autoPlay 
-                resizeMode="cover"
-                loop
-                speed={0.5}
-                />
-            </View> : null }
+
+            {
+                animacao ? 
+                    <View style={{flex: 1, height: 300, width: 300, position:"absolute", top: 200, left: 30}}>
+                        <LottieView
+                        source={require('../../assets/heart.json')}    
+                        progress={interpolation}
+                        resizeMode="cover"
+                        autoPlay
+                        loop={false}
+                        duration={1000}
+                        speed={0.2}
+                        />
+                    </View> 
+                : null 
+            }
 
             <ScrollView>
                 <View style={{padding: 16}}>
@@ -87,7 +120,7 @@ export default function Details ({navigation}) {
                         return (
                             <View style={{paddingTop: 16}}>
                                 <TouchableOpacity onPress={() => goToDetail(item)}>
-                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 8, borderRadius: 10}}/>
+                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 16, borderRadius: 10}}/>
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
                                     <MaterialIcons name="location-on" size={20} color='#fff'/>
