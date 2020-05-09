@@ -20,7 +20,7 @@ module.exports = {
     async trending(req, res) {
         const trending = await connection('local')
         .select(['local.*'])
-        .where('trending', true)
+        .where('emAlta', true)
 
         return res.json(trending)
     },

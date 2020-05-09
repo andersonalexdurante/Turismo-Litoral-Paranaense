@@ -123,7 +123,7 @@ export default function Details ({navigation}) {
                                     <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 16, borderRadius: 10}}/>
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
-                                    <MaterialIcons name="location-on" size={20} color='#fff'/>
+                                    <MaterialIcons name="location-on" size={20} color='#eb673b'/>
                                     <Text style={{color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
                                 </View>
                             </View>

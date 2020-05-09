@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, ImageBackground, TextInput, ScrollView, FlatList, TouchableOpacity, Image } from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'
 import api from '../../services/api'
@@ -9,7 +9,8 @@ export default function Home ({navigation}) {
 
     const [destaques, setDestaques] = useState([])
     const [favoritos, setFavoritos] = useState([])
-    const [alta, setAlta] = useState({})
+    const [altas, setAltas] = useState([])
+    const carouselRef = useRef(null)
 
     function goToDetail(item) {
         navigation.navigate('Details', { item })
@@ -18,7 +19,6 @@ export default function Home ({navigation}) {
     async function loadDestaques() {
         const res = await api.get('/destaques')
         setDestaques(res.data)
-        setAlta(res.data[2])
     }
 
     async function loadFavoritos() {
@@ -26,12 +26,16 @@ export default function Home ({navigation}) {
         setFavoritos(res2.data)
     }
 
+    async function loadAlta() {
+        const res3 = await api.get('/trending')
+        setAltas(res3.data)
+    }
+
     useEffect(() => {
         loadDestaques()
+        loadAlta()
         loadFavoritos()
     }, [favoritos])
-
-    
 
     return (
         <View style={{flex: 1}}>
@@ -73,11 +77,11 @@ export default function Home ({navigation}) {
                         return (
                             <View style={{paddingLeft: 16}}>
                                 <TouchableOpacity activeOpacity={1} onPress={() => goToDetail(item)}>
-                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 8, borderRadius: 10}}/>
+                                    <Image source={{uri: item.imagemCard}} style={{height: 300, width: 200, marginRight: 8, borderRadius: 10}}/>
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
                                     <MaterialIcons name="location-on" size={20} color='#eb673b'/>
-                                    <Text style={{color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
+                                    <Text style={{fontSize: 15, color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
                                 </View>
                             </View>
                         )
@@ -86,22 +90,30 @@ export default function Home ({navigation}) {
                 <View style={{paddingLeft: 16}}>
                     <Text style={{fontSize: 20, fontWeight: 'bold'}}>Em alta</Text>
                 </View>
-                <TouchableOpacity activeOpacity={1} onPress={() => goToDetail(alta)}>
-                    <ImageBackground source={{uri: alta.imagemCard}}
-                    style={{height: 250, alignSelf: 'center', marginTop: 16, marginLeft: 16, marginRight: 16}}
-                    imageStyle={{borderRadius: 10}}
-                    >
-                        <View style={{flexDirection: 'row', marginTop: 140, paddingLeft: 16}}>
-                            <MaterialIcons name="location-on" size={20} color='#eb673b'/>
-                            <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 16, textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}}>Rio Guaraguaçu</Text>
-                        </View>
-                        <View>
-                            <Text style={{color: '#fff', opacity: 0.8, fontSize: 14, textAlign: 'justify', margin: 10}}>O rio Guaraguaçu atravessa todo o litoral paranaense. É o principal rio da bacia de Paranaguá.</Text>
-                        </View>
-                    </ImageBackground>
-                </TouchableOpacity>
 
-                <View style={{padding: 16}}>
+               <View style={{marginTop: 16}}>
+                <FlatList 
+                        data={altas}
+                        horizontal={true}
+                        keyExtractor={(item) => String(item.id) }
+                        showsHorizontalScrollIndicator={false}
+                        renderItem={( { item } ) => {
+                            return (
+                                <View style={{paddingLeft: 16}}>
+                                    <TouchableOpacity activeOpacity={1} onPress={() => goToDetail(item)}>
+                                        <Image source={{uri: item.imagemCard}} style={{height: 250, width: 300, marginRight: 8, borderRadius: 10}}/>
+                                    </TouchableOpacity>
+                                    <View style={{flexDirection: 'row', bottom: 30}}>
+                                        <MaterialIcons name="location-on" size={20} color='#eb673b'/>
+                                        <Text style={{color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
+                                    </View>
+                                </View>
+                            )
+                        }}
+                    />
+               </View>
+
+                <View style={{marginLeft: 16, marginBottom: 16}}>
                     <Text style={{fontSize: 20, fontWeight: 'bold'}}>Favoritos</Text>
                 </View>
                 <FlatList 
@@ -117,7 +129,7 @@ export default function Home ({navigation}) {
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
                                     <MaterialIcons name="location-on" size={20} color='#eb673b'/>
-                                    <Text style={{color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
+                                    <Text style={{fontSize: 15, color: '#fff', textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius: 1}}>{item.nome}</Text>
                                 </View>
                             </View>
                         )
