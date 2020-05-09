@@ -10,5 +10,6 @@ routes.get('/destaques', LocalController.destaques)
 routes.get('/trending', LocalController.trending)
 routes.get('/favoritos', LocalController.favoritos)
 routes.put('/favoritos/:id', LocalController.alteraFavorito)
+routes.get('/sugestoes', LocalController.sugestoes)
 
 module.exports = routes;

@@ -25,6 +25,19 @@ module.exports = {
         return res.json(trending)
     },
 
+    async sugestoes(req, res) {
+        const id = req.headers.id
+
+        const sugestoes = await connection('local')
+        .select(['local.*'])
+        .whereRaw(`id != ${id}`)
+        .orderByRaw('RANDOM()')
+        .limit(5)
+
+        sugestoes.sort(() => Math.random() - 0.5)
+        return res.json(sugestoes)
+    },
+
     async create(req, res) {
         const { nome, descricao, imagemCard, imagemDetail, latitude, longitude, destaque, emAlta, favorito } = req.body
 

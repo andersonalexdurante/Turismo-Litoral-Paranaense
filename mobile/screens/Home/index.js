@@ -125,7 +125,7 @@ export default function Home ({navigation}) {
                         return (
                             <View style={{paddingLeft: 16}}>
                                 <TouchableOpacity activeOpacity={1} onPress={() => goToDetail(item)}>
-                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 8, borderRadius: 10}}/>
+                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 160, marginRight: 8, borderRadius: 10}}/>
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
                                     <MaterialIcons name="location-on" size={20} color='#eb673b'/>

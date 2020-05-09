@@ -24,11 +24,13 @@ export default function Details ({navigation}) {
         navigation.navigate('Details', { item })
     }
 
-    async function loadLocals() {
-        const res = await api.get('/locais')
-
-        setSugestoes(res.data)
-        
+    async function loadSugestoes() {
+        const res = await api.get('/sugestoes', {
+            headers: {
+                id: local.id
+            }
+        })
+        setSugestoes(res.data)       
     }
 
     async function changeFavorite() {
@@ -57,7 +59,7 @@ export default function Details ({navigation}) {
     }
 
     useEffect(() => {
-        loadLocals()
+        loadSugestoes()
     }, [])
 
     const interpolation = progresso.interpolate({ inputRange: [0, 1], outputRange: [0, 0] });
@@ -109,8 +111,8 @@ export default function Details ({navigation}) {
                     <Text style={{opacity: 0.8, textAlign: 'justify', marginTop: 10, lineHeight: 20}}>{local.descricao}</Text>
                 </View>
 
-                <View style={{paddingHorizontal: 16}}>
-                    <Text style={{fontSize: 20, fontWeight: 'bold'}}>Sugestões</Text>
+                <View>
+                    <Text style={{fontSize: 20, fontWeight: 'bold', marginLeft: 16}}>Sugestões</Text>
                     <FlatList 
                     data={sugestoes}
                     horizontal={true}
@@ -118,9 +120,9 @@ export default function Details ({navigation}) {
                     showsHorizontalScrollIndicator={false}
                     renderItem={( { item } ) => {
                         return (
-                            <View style={{paddingTop: 16}}>
+                            <View style={{paddingTop: 16, marginLeft: 16}}>
                                 <TouchableOpacity onPress={() => goToDetail(item)}>
-                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 150, marginRight: 16, borderRadius: 10}}/>
+                                    <Image source={{uri: item.imagemCard}} style={{height: 250, width: 160, marginRight: 16, borderRadius: 10}}/>
                                 </TouchableOpacity>
                                 <View style={{flexDirection: 'row', bottom: 30}}>
                                     <MaterialIcons name="location-on" size={20} color='#eb673b'/>
