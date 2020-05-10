@@ -7,7 +7,6 @@ import LottieView from 'lottie-react-native'
 import api from '../../services/api'
 
 export default function Details ({navigation}) {
-    
     const route = useRoute()
     const local = route.params.item
 
@@ -22,6 +21,10 @@ export default function Details ({navigation}) {
 
     function goToDetail(item) {
         navigation.navigate('Details', { item })
+    }
+
+    function goToMap(item) {
+        navigation.navigate('Map', { item })
     }
 
     async function loadSugestoes() {
@@ -60,6 +63,7 @@ export default function Details ({navigation}) {
 
     useEffect(() => {
         loadSugestoes()
+        window.scrollTo
     }, [])
 
     const interpolation = progresso.interpolate({ inputRange: [0, 1], outputRange: [0, 0] });
@@ -82,7 +86,7 @@ export default function Details ({navigation}) {
                 <View style={{marginTop: 200, position: 'absolute'}}>
                     <Text style={{color: '#fff', fontSize: 16, paddingHorizontal: 14, marginBottom: 20,textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}}>Descubra {local.nome}</Text>
                     <Text style={{color: '#fff', fontSize: 24, fontWeight: 'bold', paddingHorizontal: 14,textShadowColor: '#000', textShadowOffset:{width: 1, height: 1}, textShadowRadius:1}}>Explore a beleza incrível de {local.nome}</Text>
-                    <TouchableOpacity style={{backgroundColor: '#27c227', position: 'absolute', borderRadius: 30, top: 110, left: 210, flexDirection: 'row', padding: 10}}>
+                    <TouchableOpacity onPress={() => goToMap(local)} style={{backgroundColor: '#27c227', position: 'absolute', borderRadius: 30, top: 110, left: 210, flexDirection: 'row', padding: 10}}>
                         <MaterialIcons name="location-on" size={20} color='#eb673b' />
                         <Text style={{color: '#fff', fontWeight: 'bold', fontSize: 16}}>Localização</Text>
                     </TouchableOpacity>
