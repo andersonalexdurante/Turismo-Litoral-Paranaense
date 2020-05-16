@@ -1,6 +1,6 @@
 # Litoral PR - Turismo
 
-### :ocean: In order to learn maps and animations to use in my react native applications, I developed this app of turism for my region
+### :ocean: In order to learn maps and animations to use in my react native applications, I developed this app of tourism for my region
 
 ##### :computer: Backend made of pure Node with Express and Knex using SQL database. 
 ##### :iphone: Mobile frontend using Expo and Axios for the API consume.
