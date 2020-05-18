@@ -2,7 +2,7 @@
 
 ### :ocean: In order to learn maps and animations to use in my react native applications, I developed this app of tourism for my region
 
-##### :computer: Backend made of pure Node with Express and Knex using SQL database. 
+##### :computer: Backend made of pure Node using Express framework
 ##### :iphone: Mobile frontend using Expo and Axios for the API consume.
 
 For the animations I used the Airbnb package [Lottie](https://github.com/react-native-community/lottie-react-native), that allow us to use native animations in our applications using just JSON.
